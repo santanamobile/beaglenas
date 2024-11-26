@@ -1,0 +1,4 @@
+.vscode
+.sonarlint
+run-sonarscanner.sh
+*~
