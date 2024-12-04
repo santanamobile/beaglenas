@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/datepicker.min.css">
     <link rel="stylesheet" href="./css/font-awesome.min.css">
-    <link rel="stylesheet" href="./css/datatables.css">
+    <!-- <link rel="stylesheet" href="./css/datatables.css"> -->
     <link rel="stylesheet" href="./css/skin-red.css">
     <link rel="stylesheet" href="./css/timepicker.min.css">
     <link rel="stylesheet" href="./css/engine.css">
@@ -24,7 +24,7 @@
     <div class="wrapper">
         <header class="main-header">
             <a href="#" class="logo">
-                <span class="logo-mini"><i class="fa fa-bolt"></i></span>
+                <span class="logo-mini"><i class="fa fa-cogs"></i></span>
                 <span class="logo-lg"><b>BeagleNAS</b></span>
             </a>
 <!-- Header Navbar -->
@@ -49,12 +49,12 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu">
-                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-networkIP">
+                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-networkSettings">
                                     <i class="fa fa-laptop"></i>IP Address</a></li>
                                 <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-user">
                                     <i class="fa fa-user"></i>Credentials</a></li>
                                 <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-datetime">
-                                    <i class="fa fa-clock-o"></i>Date/Time</a></li>
+                                    <i class="fa fa-calendar"></i>Date/Time</a></li>
                                 <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-defaults">
                                     <i class="fa fa-undo"></i>Default Settings</a></li>
                                 <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-reboot">
@@ -79,39 +79,37 @@
                     <div class="row">
                         <div class="col-md-3 col-sm-6 col-xs-12">
                             <div class="info-box">
-                                <span class="info-box-icon bg-red"><i class="fa fa-question" id="upsStatusIcon"></i></span>
+                                <span class="info-box-icon bg-red"><i class="fa fa-server" id="statusIcon0"></i></span>
                                 <div class="info-box-content">
-                                    <span class="info-box-text"><span id="upsStatus">Status 01</span></span>
-                                    <span class="info-box-number"><span id="upsTemperature">&nbsp;</span></span>
+                                    <span class="info-box-text">CPU</span>
+                                    <span class="info-box-number"><span id="stValue0">10% &nbsp;</span></span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
                             <div class="info-box">
-                                <span class="info-box-icon bg-red"><i class="fa fa-question" id="upsInputIcon"></i></span>
+                                <span class="info-box-icon bg-red"><i class="fa fa-area-chart" id="statusIcon1"></i></span>
                                 <div class="info-box-content">
-                                    <span class="info-box-text"><span id="acdcInputText">Status 02</span></span>
-                                    <span class="info-box-number"><span id="inputVoltage">&nbsp;</span></span>
-                                    <span class="info-box-number"><span id="upsFrequency">&nbsp;</span></span>
+                                    <span class="info-box-text">Memory</span>
+                                    <span class="info-box-number"><span id="stValue1">70%&nbsp;</span></span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
                             <div class="info-box">
-                                <span class="info-box-icon bg-red"><i class="fa fa-question" id="upsBatteryIcon"></i></span>
+                                <span class="info-box-icon bg-red"><i class="fa fa-sitemap" id="statusIcon2"></i></span>
                                 <div class="info-box-content">
-                                    <span class="info-box-text"><span id="batteryText">Status 03</span></span>
-                                    <span class="info-box-number"><span id="batteryVoltage">&nbsp;</span></span>
+                                    <span class="info-box-text">Network</span>
+                                    <span class="info-box-number"><span id="stValue2">&nbsp;</span></span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
                             <div class="info-box">
-                                <span class="info-box-icon bg-red"><i class="fa fa-question" id="upsOutputIcon"></i></span>
+                                <span class="info-box-icon bg-red"><i class="glyphicon glyphicon-floppy-remove" id="statusIcon3"></i></span>
                                 <div class="info-box-content">
-                                    <span class="info-box-text">Status 04</span>
-                                    <span class="info-box-number"><span id="outputVoltage">&nbsp;</span></span>
-                                    <span class="info-box-number"><span id="upsLoad">&nbsp;</span></span>
+                                    <span class="info-box-text">Storage</span>
+                                    <span class="info-box-number"><span id="stValue3"> &nbsp;</span></span>
                                 </div>
                             </div>
                         </div>
@@ -121,7 +119,7 @@
                 </section>
             </div>
             <!-- Modal -->
-            <div class="modal fade" id="modal-networkIP">
+            <div class="modal fade" id="modal-networkSettings">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -330,28 +328,6 @@
                 </div>
             </div>
 
-            <div class="modal fade" id="modal-support">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa fa-user-md"></i> Support Info</h4>
-                        </div>
-                        <div class="modal-body">
-                            <ul>
-                                <li>Model: <span id="upsModel">&nbsp;</span></li>
-                                <li>Version: <span id="upsVersion">&nbsp;</span></li>
-                                <li>Firmware: <span id="firmwareVersionSupport">&nbsp;</span></li>
-                            <ul>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="modal fade" id="modal-shutdown">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -451,7 +427,7 @@
             <!-- Modal -->
             <!-- /.content-wrapper -->
         <footer class="main-footer">
-            <div class="pull-right hidden-xs"><b>Firmware Version</b> <span id="firmwareVersionFooter"> &nbsp; </span></div>
+            <div class="pull-right hidden-xs"><b>Firmware Version</b> <span id="firmwareVersionFooter"> v0.0.1 &nbsp; </span></div>
             <strong>MIT License</strong>
         </footer>
         </div>
@@ -468,15 +444,11 @@
         <script type="text/javascript" src="js/engine.js"></script>
 <script>
 
-setInterval(function() { getData(); }, 1000);
-setInterval(function() { getDateTime(); }, 3600);
+// setInterval(function() { getData(); }, 1000);
+// setInterval(function() { getDateTime(); }, 3600);
 
 $(document).ready(function()
 {
-    var fwMax, fwMin, fwRel, fwVer;
-    var statusUtility, statusBattery, statusBypass, statusFailed, statusStandby, statusTest, statusShutdown, statusBeeper;
-    var settingsNTP;
-    var mustUpgrade = false;
 
     $('[data-mask]').inputmask()
 
@@ -535,7 +507,7 @@ $("#modal-user").on("shown.bs.modal", function ()
 
 });
 
-$("#modal-networkIP").on("shown.bs.modal", function ()
+$("#modal-networkSettings").on("shown.bs.modal", function ()
 {
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
@@ -587,11 +559,7 @@ $("#modal-datetime").on("shown.bs.modal", function ()
         };
     };
 
-//    xmlhttp.open("GET", "settings.json", true);
-//    xmlhttp.send();
-
 });
 </script>
 </body>
 </html>
-
