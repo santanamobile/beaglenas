@@ -65,6 +65,10 @@ def get_info():
         upload_rate = 0
         download_rate = 0
 
+    if not ((upload_rate > 0) or (download_rate > 0)):
+        upload_rate = 0
+        download_rate = 0
+
     previous_net = iface_net if NETWORK_INTERFACE in current_net else previous_net
     previous_time = current_time
 
