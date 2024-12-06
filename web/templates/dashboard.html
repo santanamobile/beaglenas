@@ -30,8 +30,8 @@ async function updateDashboard() {
 
         document.getElementById('cpu_usage').textContent = data.cpu_usage + '%';
         document.getElementById('memory_usage').textContent = data.memory_usage + '%';
-        document.getElementById('network_usage_send').textContent = data.network_send + ' KB/s';
-        document.getElementById('network_usage_recv').textContent = data.network_recv + ' KB/s';
+        document.getElementById('network_upload_rate').textContent = data.upload_rate + ' KB/s';
+        document.getElementById('network_download_rate').textContent = data.download_rate + ' KB/s';
 
         const eth0 = data.network_info.find(iface => iface.interface === 'eth0');
 
@@ -147,10 +147,10 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                                     <span class="info-box-text">Network Activity</span>
                                     <span class="info-box-number">
                                         <i class="fa fa-arrow-up"></i>
-                                        <span id="network_usage_send" class="card-text">Loading...</span></span>
+                                        <span id="network_upload_rate" class="card-text">Loading...</span></span>
                                     <span class="info-box-number">
                                         <i class="fa fa-arrow-down"></i>
-                                        <span id="network_usage_recv" class="card-text">Loading...</span></span>
+                                        <span id="network_download_rate" class="card-text">Loading...</span></span>
                                 </div>
                             </div>
                         </div>
@@ -186,29 +186,29 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                                     <input class="form-check-input" type="radio" name="addressType" id="addressTypeDynamic" value="1">
                                     <label class="form-check-label" for="addressTypeDynamic">
                                     DHCP (<span id="displayDHCPAddress">&nbsp;</span>)
-                                    </label>
+                                    </b>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="addressType" id="addressTypeFixed" value="2">
                                     <label class="form-check-label" for="addressTypeFixed">
                                     Fixed
-                                    </label>
+                                    </b>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>IP Address</label>
+                                <b>IP Address</b>
                                 <div class="input-group">
                                     <input type="text" id="staticIP" class="form-control" data-inputmask="'alias': 'ip'" data-mask>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>Network Mask</label>
+                                <b>Network Mask</b>
                                 <div class="input-group">
                                     <input type="text" id="staticSN" class="form-control" data-inputmask="'alias': 'ip'" data-mask>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>Network Gateway</label>
+                                <b>Network Gateway</b>
                                 <div class="input-group">
                                     <input type="text" id="staticGW" class="form-control" data-inputmask="'alias': 'ip'" data-mask>
                                 </div>
@@ -238,10 +238,10 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                                     <input class="form-check-input" type="radio" name="timestampType" id="timestampDynamic" value="1">
                                     <label class="form-check-label" for="timestampDynamic">
                                     Automatic (NTP)
-                                    </label>
+                                    </b>
                                 </div>
                                 <div class="form-group">
-                                    <label>Server:</label>
+                                    <b>Server:</b>
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="fa fa-cloud"></i>
@@ -253,10 +253,10 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                                     <input class="form-check-input" type="radio" name="timestampType" id="timestampManual" value="2">
                                     <label class="form-check-label" for="timestampManual">
                                     Manual
-                                    </label>
+                                    </b>
                                 </div>
                                 <div class="form-group">
-                                    <label>Date:</label>
+                                    <b>Date:</b>
                                     <div class="input-group date">
                                         <div class="input-group-addon">
                                             <i class="fa fa-calendar"></i>
@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                                 </div>
                                 <div class="bootstrap-timepicker">
                                     <div class="form-group">
-                                        <label>Time:</label>
+                                        <b>Time:</b>
                                         <div class="input-group">
                                             <div class="input-group-addon">
                                                 <i class="fa fa-clock-o"></i>
@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Timezone:</label>
+                                    <b>Timezone:</b>
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="fa fa-map-o"></i>
@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                             <form name="formUser" class="formUser">
                             <div class="box-body">
                                 <div class="form-group">
-                                    <label>Username:</label>
+                                    <b>Username:</b>
                                     <div class="input-group">
                                         <div class="input-group-addon">
                                             <i class="fa fa-user"></i>
@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Password:</label>
+                                    <b>Password:</b>
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="fa fa-lock"></i>
