@@ -2,7 +2,7 @@
 # Flask Web Server
 #
 from flask import Flask, render_template, redirect, request, url_for, session, jsonify, send_from_directory
-from flask_cors import CORS
+from flask_wtf.csrf import CSRFProtect
 from datetime import datetime
 from config import USERNAME, PASSWORD, MOUNT_POINT, NETWORK_INTERFACE, STATIC_FOLDER, TEMPLATE_FOLDER
 import subprocess
@@ -11,10 +11,11 @@ import psutil
 import time
 import os
 
+auto_generated_key = os.urandom(32)
 app = Flask(__name__, static_folder=STATIC_FOLDER, template_folder=TEMPLATE_FOLDER)
-app.secret_key = '$y$j9T$4bYEs2dUccGD2zGZFCkMO/$VNdPFDyJalw5Rn6t.BhLFULCl//BH0vD1WZ1dmOFQhB'
+app.secret_key = auto_generated_key.hex()
 app.debug = False
-CORS(app)
+csrf = CSRFProtect(app)
 
 previous_net = psutil.net_io_counters()
 previous_time = time.time()
@@ -155,4 +156,4 @@ def favicon():
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0')
