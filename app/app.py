@@ -2,8 +2,10 @@
 # Flask Web Server
 #
 from flask import Flask, render_template, redirect, request, url_for, session, jsonify, send_from_directory
+from flask_cors import CORS
 from datetime import datetime
 from config import USERNAME, PASSWORD, MOUNT_POINT, NETWORK_INTERFACE
+import subprocess
 import netifaces
 import psutil
 import time
@@ -12,9 +14,28 @@ import os
 app = Flask(__name__, static_folder='/var/www/static', template_folder='/var/www/templates')
 app.secret_key = '$y$j9T$4bYEs2dUccGD2zGZFCkMO/$VNdPFDyJalw5Rn6t.BhLFULCl//BH0vD1WZ1dmOFQhB'
 app.debug = False
+CORS(app)
 
 previous_net = psutil.net_io_counters()
 previous_time = time.time()
+
+@app.route('/unmount_usb0', methods=['POST'])
+def unmount_usb():
+
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+
+    usb_mount_point = MOUNT_POINT
+
+    if not os.path.ismount(usb_mount_point):
+        return jsonify({"status": "error", "message": "Device not present"}), 400
+
+    try:
+        # Executa o comando umount
+        subprocess.check_call(['umount', usb_mount_point])
+        return jsonify({"status": "success", "message": "Device removed with success!"})
+    except subprocess.CalledProcessError as e:
+        return jsonify({"status": "error", "message": f"Eject error: {e}"}), 500
 
 def get_network_info():
 
@@ -155,5 +176,4 @@ def favicon():
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000)
-
+    app.run(host='0.0.0.0', port=5000)

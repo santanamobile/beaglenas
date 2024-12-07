@@ -161,3 +161,43 @@ function fillTimedTest()
     document.getElementById("timedTestList").selectedIndex = 0;
 
 }
+
+async function unmountUSB()
+{
+    $('#modal-eject').modal('hide');
+    $('#modal-waiting').modal({backdrop: 'static', keyboard: false});
+
+    setTimeout(function() {
+        $('#modal-waiting').modal('hide');
+    }, 1000);
+
+    try {
+        const response = await fetch('/unmount_usb0', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            $('#modal-waiting').on('hidden.bs.modal', function (e) {
+                document.getElementById('modalSuccessText').innerHTML = "Device removed with success!";
+                $('#modal-success').modal('show');
+            });
+        } else {
+            $('#modal-waiting').modal('hide');
+            document.getElementById('modalErrorText').innerHTML = "Error ejecting device.";
+            $('#modal-waiting').on('hidden.bs.modal', function (e) {
+                $('#modal-error').modal('show');
+            });
+        }
+    } catch (error) {
+            $('#modal-waiting').modal('hide');
+            document.getElementById('modalErrorText').innerHTML = "Communication error.";
+            $('#modal-waiting').on('hidden.bs.modal', function (e) {
+                $('#modal-error').modal('show');
+            });        console.error("Error:", error);
+    }
+}
+
