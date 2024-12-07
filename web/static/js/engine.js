@@ -164,6 +164,9 @@ function fillTimedTest()
 
 async function unmountUSB()
 {
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
     $('#modal-eject').modal('hide');
     $('#modal-waiting').modal({backdrop: 'static', keyboard: false});
 
@@ -176,6 +179,7 @@ async function unmountUSB()
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
             },
         });
 

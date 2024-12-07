@@ -20,6 +20,7 @@
   <div class="login-logo"><img src="/static/img/nas.png" alt="NAS"></div>
   <div class="login-box-body">
     <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="form-group">
             <div class="input-group">
                 <div class="input-group-addon">
