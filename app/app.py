@@ -3,18 +3,36 @@
 #
 from flask import Flask, render_template, redirect, request, url_for, session, jsonify, send_from_directory
 from datetime import datetime
-from config import USERNAME, PASSWORD, MOUNT_POINT, NETWORK_INTERFACE
+from config import USERNAME, PASSWORD, MOUNT_POINT, NETWORK_INTERFACE, STATIC_FOLDER, TEMPLATE_FOLDER
+import subprocess
 import netifaces
 import psutil
 import time
 import os
 
-app = Flask(__name__, static_folder='/var/www/static', template_folder='/var/www/templates')
+app = Flask(__name__, static_folder=STATIC_FOLDER, template_folder=TEMPLATE_FOLDER)
 app.secret_key = '$y$j9T$4bYEs2dUccGD2zGZFCkMO/$VNdPFDyJalw5Rn6t.BhLFULCl//BH0vD1WZ1dmOFQhB'
 app.debug = False
 
 previous_net = psutil.net_io_counters()
 previous_time = time.time()
+
+@app.route('/unmount_usb0', methods=['POST'])
+def unmount_usb():
+
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+
+    usb_mount_point = MOUNT_POINT
+
+    if not os.path.ismount(usb_mount_point):
+        return jsonify({"status": "error", "message": "Device not present"}), 400
+
+    try:
+        subprocess.check_call(['umount', usb_mount_point])
+        return jsonify({"status": "success", "message": "Device removed with success!"})
+    except subprocess.CalledProcessError as e:
+        return jsonify({"status": "error", "message": f"Eject error: {e}"}), 500
 
 def get_network_info():
 
@@ -45,14 +63,11 @@ def get_info():
 
     global previous_net, previous_time
 
-    # CPU Usage
     cpu_usage = psutil.cpu_percent(interval=1)
 
-    # Memory Usage
     memory = psutil.virtual_memory()
     memory_usage = memory.percent
 
-    # Network Usage
     current_time = time.time()
     current_net = psutil.net_io_counters(pernic=True)
 
@@ -110,22 +125,6 @@ def get_info():
         'network_info': network_info
     })
 
-@app.route('/settings', methods=['GET'])
-def get_settings():
-
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
-
-    return jsonify({
-        'www_username': 'admin',
-        'dhcp': True,
-        'static_ip': '192.168.0.10',
-        'static_sn': '255.255.255.0',
-        'static_gw': '192.168.0.1',
-        'TZ': -3,
-        'hostname': 'hostname'
-    })
-
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -149,11 +148,9 @@ def logout():
     session.pop('logged_in', None)
     return redirect(url_for('login'))
 
-# https://flask.palletsprojects.com/en/stable/patterns/favicon/
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000)
-
+    app.run(host='0.0.0.0', port=5000)

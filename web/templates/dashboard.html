@@ -30,8 +30,23 @@ async function updateDashboard() {
 
         document.getElementById('cpu_usage').textContent = data.cpu_usage + '%';
         document.getElementById('memory_usage').textContent = data.memory_usage + '%';
-        document.getElementById('network_upload_rate').textContent = data.upload_rate + ' KB/s';
-        document.getElementById('network_download_rate').textContent = data.download_rate + ' KB/s';
+
+        urate = data.upload_rate;
+        drate = data.download_rate;
+
+        if (urate < 1000)
+            document.getElementById('network_upload_rate').textContent = urate + ' Kb/s';
+        else {
+            urate = urate / 1000
+            document.getElementById('network_upload_rate').textContent = urate.toFixed(2) + ' Mb/s';
+        }
+
+        if (drate < 1000)
+            document.getElementById('network_download_rate').textContent = drate + ' Kb/s';
+        else {
+            drate = drate / 1000
+            document.getElementById('network_download_rate').textContent = drate.toFixed(2) + ' Mb/s';
+        }
 
         const eth0 = data.network_info.find(iface => iface.interface === 'eth0');
 
@@ -69,7 +84,7 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
     <div class="wrapper">
         <header class="main-header">
             <a href="#" class="logo">
-                <span class="logo-mini"><i class="fa fa-cloud"></i></span>
+                <span class="logo-mini"><i class="fa fa-linux"></i></span>
                 <span class="logo-lg"><b>BeagleNAS</b></span>
             </a>
 <!-- Header Navbar -->
@@ -106,6 +121,20 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                                     <i class="fa fa-power-off"></i>Restart</a></li>
                             </ul>
                         </li>
+
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-floppy-o"></i> <span>Storage</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-eject">
+                                    <i class="fa fa-eject"></i>Eject</a></li>
+                            </ul>
+                        </li>
+
                         <li>
                             <a href="{{ url_for('logout') }}">
                                 <i class="fa fa-sign-out"></i> <span>Logout</span>
@@ -124,7 +153,7 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                     <div class="row">
                         <div class="col-md-3 col-sm-6 col-xs-12">
                             <div class="info-box bg-red">
-                                <span class="info-box-icon"><i class="fa fa-server" id="statusIcon0"></i></span>
+                                <span class="info-box-icon"><i class="fa fa-heartbeat" id="statusIcon0"></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">CPU Usage</span>
                                     <span class="info-box-number"><span id="cpu_usage" class="card-text">Loading...</span></span>
@@ -356,6 +385,24 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-eject">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title"><i class="fa fa-eject"></i> Remove USB Device</h4>
+                        </div>
+                        <div class="modal-body">Remove USB Device
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="unmountButton" onclick="unmountUSB()">Eject</button>
                         </div>
                     </div>
                 </div>
