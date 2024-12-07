@@ -2,6 +2,7 @@
 # Flask Web Server
 #
 from flask import Flask, render_template, redirect, request, url_for, session, jsonify, send_from_directory
+from flask_cors import CORS
 from datetime import datetime
 from config import USERNAME, PASSWORD, MOUNT_POINT, NETWORK_INTERFACE, STATIC_FOLDER, TEMPLATE_FOLDER
 import subprocess
@@ -13,6 +14,7 @@ import os
 app = Flask(__name__, static_folder=STATIC_FOLDER, template_folder=TEMPLATE_FOLDER)
 app.secret_key = '$y$j9T$4bYEs2dUccGD2zGZFCkMO/$VNdPFDyJalw5Rn6t.BhLFULCl//BH0vD1WZ1dmOFQhB'
 app.debug = False
+CORS(app)
 
 previous_net = psutil.net_io_counters()
 previous_time = time.time()
