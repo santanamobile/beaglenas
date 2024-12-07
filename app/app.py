@@ -17,6 +17,10 @@ previous_net = psutil.net_io_counters()
 previous_time = time.time()
 
 def get_network_info():
+
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+
     network_info = []
     interfaces = netifaces.interfaces()
     
@@ -35,6 +39,9 @@ def get_network_info():
 
 @app.route('/status', methods=['GET'])
 def get_info():
+
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
 
     global previous_net, previous_time
 
@@ -106,6 +113,9 @@ def get_info():
 @app.route('/settings', methods=['GET'])
 def get_settings():
 
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+
     return jsonify({
         'www_username': 'admin',
         'dhcp': True,
@@ -146,3 +156,4 @@ def favicon():
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000)
+
