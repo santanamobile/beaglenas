@@ -20,65 +20,10 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-<script>
-async function updateDashboard() {
-    try {
-        const response = await fetch('/status');
-        const data = await response.json();
 
-        document.getElementById("deviceDate").innerHTML = data.system_date;
-        document.getElementById("deviceTime").innerHTML = data.system_time;
-
-        document.getElementById('cpu_usage').textContent = data.cpu_usage + '%';
-        document.getElementById('memory_usage').textContent = data.memory_usage + '%';
-
-        urate = data.upload_rate;
-        drate = data.download_rate;
-
-        if (urate < 1000)
-            document.getElementById('network_upload_rate').textContent = urate + ' Kb/s';
-        else {
-            urate = urate / 1000
-            document.getElementById('network_upload_rate').textContent = urate.toFixed(2) + ' Mb/s';
-        }
-
-        if (drate < 1000)
-            document.getElementById('network_download_rate').textContent = drate + ' Kb/s';
-        else {
-            drate = drate / 1000
-            document.getElementById('network_download_rate').textContent = drate.toFixed(2) + ' Mb/s';
-        }
-
-        const eth0 = data.network_info.find(iface => iface.interface === 'eth0');
-
-        if (eth0) {
-            document.getElementById("staticIP").value = eth0.ip_address || '';
-            document.getElementById("staticSN").value = eth0.netmask || '';
-            document.getElementById("staticGW").value = eth0.gateway || '';
-        }
-
-        let elem = document.getElementById("storage_percent");
-        if (data.storage_available == "Unavailable") {
-            document.getElementById("statusIcon3").className = "glyphicon glyphicon-floppy-remove";
-            document.getElementById('storage_available').textContent = 'N/A';
-            document.getElementById('storage_progress_desc').textContent = '';
-            elem.style.width = "0%";
-        } else {
-            document.getElementById("statusIcon3").className = "glyphicon glyphicon-floppy-saved";
-            document.getElementById('storage_available').textContent = data.storage_available + ' GB';
-            elem.style.width = data.storage_percent + "%";
-            document.getElementById('storage_progress_desc').textContent = data.storage_percent + "%";
-        }
-
-    } catch (error) {
-        console.error("Endpoint error:", error);
-    }
-
-}
-
-setInterval(updateDashboard, 5000);
-document.addEventListener('DOMContentLoaded', updateDashboard);
-</script>
+<!-- Async Function -->
+<script></script>
+<!-- Async Function -->
 
 </head>
 <body class="hold-transition skin-purple sidebar-mini">
@@ -99,51 +44,10 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                 </a>
             </nav>
         </header>
+            <!-- ./tree-view-menus -->
             <aside class="main-sidebar">
-                <section class="sidebar">
-                    <ul class="sidebar-menu" data-widget="tree">
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-wrench"></i> <span>Settings</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span>
-                            </a>
-                            <ul class="treeview-menu">
-                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-networkSettings">
-                                    <i class="fa fa-laptop"></i>Network</a></li>
-                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-user">
-                                    <i class="fa fa-user"></i>Credentials</a></li>
-                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-datetime">
-                                    <i class="fa fa-calendar"></i>Date/Time</a></li>
-                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-defaults">
-                                    <i class="fa fa-undo"></i>Default Settings</a></li>
-                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-reboot">
-                                    <i class="fa fa-power-off"></i>Restart</a></li>
-                            </ul>
-                        </li>
-
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-floppy-o"></i> <span>Storage</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span>
-                            </a>
-                            <ul class="treeview-menu">
-                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-eject">
-                                    <i class="fa fa-eject"></i>Eject</a></li>
-                            </ul>
-                        </li>
-
-                        <li>
-                            <a href="{{ url_for('logout') }}">
-                                <i class="fa fa-sign-out"></i> <span>Logout</span>
-                            </a>
-                        </li>
-                    </ul>
-                </section>
             </aside>
+            <!-- ./tree-view-menus -->
             <div class="content-wrapper">
                 <section class="content-header">&nbsp;
                     <ol class="breadcrumb">
@@ -201,329 +105,6 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                 </section>
             </div>
             <!-- Modal -->
-            <div class="modal fade" id="modal-networkSettings">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa fa-laptop"></i> Network Settings</h4>
-                        </div>
-                        <div class="modal-body">
-                            <form>
-                            <div class="form-group">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="addressType" id="addressTypeDynamic" value="1">
-                                    <label class="form-check-label" for="addressTypeDynamic">
-                                    DHCP (<span id="displayDHCPAddress">&nbsp;</span>)
-                                    </b>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="addressType" id="addressTypeFixed" value="2">
-                                    <label class="form-check-label" for="addressTypeFixed">
-                                    Fixed
-                                    </b>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <b>IP Address</b>
-                                <div class="input-group">
-                                    <input type="text" id="staticIP" class="form-control" data-inputmask="'alias': 'ip'" data-mask>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <b>Network Mask</b>
-                                <div class="input-group">
-                                    <input type="text" id="staticSN" class="form-control" data-inputmask="'alias': 'ip'" data-mask>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <b>Network Gateway</b>
-                                <div class="input-group">
-                                    <input type="text" id="staticGW" class="form-control" data-inputmask="'alias': 'ip'" data-mask>
-                                </div>
-                            </div>
-                            <form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary" onclick="saveNetworkIP()">Save</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="modal-datetime">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa fa-clock-o"></i> Date/Time Settings</h4>
-                        </div>
-                        <div class="modal-body">
-                            <form name="formDateTime" class="formDateTime">
-                            <div class="box-body">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="timestampType" id="timestampDynamic" value="1">
-                                    <label class="form-check-label" for="timestampDynamic">
-                                    Automatic (NTP)
-                                    </b>
-                                </div>
-                                <div class="form-group">
-                                    <b>Server:</b>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-cloud"></i>
-                                        </span>
-                                        <input type="text" class="form-control" id="ntpServer" placeholder="pool.ntp.org">
-                                    </div>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="timestampType" id="timestampManual" value="2">
-                                    <label class="form-check-label" for="timestampManual">
-                                    Manual
-                                    </b>
-                                </div>
-                                <div class="form-group">
-                                    <b>Date:</b>
-                                    <div class="input-group date">
-                                        <div class="input-group-addon">
-                                            <i class="fa fa-calendar"></i>
-                                        </div>
-                                        <input type="text" class="form-control" id="datePicker">
-                                    </div>
-                                </div>
-                                <div class="bootstrap-timepicker">
-                                    <div class="form-group">
-                                        <b>Time:</b>
-                                        <div class="input-group">
-                                            <div class="input-group-addon">
-                                                <i class="fa fa-clock-o"></i>
-                                            </div>
-                                            <input type="text" class="form-control timepicker" id="timePicker">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <b>Timezone:</b>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-map-o"></i>
-                                        </span>
-                                        <select id="timeZoneList" name="timeZoneList" class="form-control">
-                                        </select>
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-search" id="tzDetect" onclick="timeZoneDetect()"></i>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary" onclick="saveDateTime()">Save</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="modal-user">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa fa-user"></i> Username and Password</h4>
-                        </div>
-                        <div class="modal-body">
-                            <form name="formUser" class="formUser">
-                            <div class="box-body">
-                                <div class="form-group">
-                                    <b>Username:</b>
-                                    <div class="input-group">
-                                        <div class="input-group-addon">
-                                            <i class="fa fa-user"></i>
-                                        </div>
-                                        <input type="text" class="form-control" id="inputUsername" disabled="" placeholder="admin">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <b>Password:</b>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-lock"></i>
-                                        </span>
-                                        <input type="password" class="form-control" id="inputPassword" placeholder="Password">
-                                        <span class="input-group-addon">
-                                            <input type="checkbox" onclick="showUserPass()">
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary" id="submit" onclick="saveUserPass()">Save</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="modal-defaults">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa fa-undo"></i> Restore Settings</h4>
-                        </div>
-                        <div class="modal-body">
-                            <p>Click button to restore default settings.</p>
-                            <button type="button" class="btn btn-default btn-danger" data-dismiss="modal" onclick="cmdDefaults()">Restore!</button>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="modal-eject">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa fa-eject"></i> Remove USB Device</h4>
-                        </div>
-                        <div class="modal-body">Remove USB Device
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary" id="unmountButton" onclick="unmountUSB()">Eject</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="modal-reboot">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa fa-power-off"></i> Restart BeagleNAS</h4>
-                        </div>
-                        <div class="modal-body">
-                            <p>Click button to restart the BeagleNAS</p>
-                            <button type="button" class="btn btn-default btn-danger" data-dismiss="modal" onclick="cmdReboot()">Restart</button>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="modal-shutdown">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa fa-power-off"></i> &nbsp; Shutdown</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="box-body">
-                                <div class="row">
-                                    <div class="col-xs-6"><button type="button" class="btn btn-block btn-primary" onclick="sendCommand(7)">Shutdown</button></div>
-                                    <div class="col-xs-6">&nbsp;</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-6"><button type="button" class="btn btn-block btn-danger" onclick="sendCommand(9)">Cancel</button></div>
-                                    <div class="col-xs-6">&nbsp;</div>
-                                </div>                                
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Fechar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="modal-success">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa fa-hand-spock-o"></i> &nbsp; Success</h4>
-                        </div>
-                        <div class="modal-body" id="modalSuccessText">&nbsp;</div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn pull-left btn-success" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="modal-error">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa fa-warning"></i> &nbsp; Error</h4>
-                        </div>
-                        <div class="modal-body" id="modalErrorText">&nbsp;</div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn pull-left btn-danger" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="modal-waiting">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title">
-                                <div class="overlay">
-                                  <i class="fa fa-refresh fa-spin"></i> &nbsp; Please Wait
-                                </div>
-                            </h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="progress active">
-                                <div class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">&nbsp; </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="modal-info">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa fa-info"></i> &nbsp; Attention</h4>
-                        </div>
-                        <div class="modal-body" id="modalInfoText">&nbsp;</div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn pull-left btn-info" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <!-- Modal -->
             <!-- /.content-wrapper -->
         <footer class="main-footer">
@@ -547,17 +128,12 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
 
 $(document).ready(function()
 {
-
     $('[data-mask]').inputmask()
-
     document.getElementById("addressTypeDynamic").onclick = changeNetworkHostInput;
     document.getElementById("addressTypeFixed").onclick = changeNetworkHostInput;
-
     document.getElementById("timestampDynamic").onclick = changeNTP;
     document.getElementById("timestampManual").onclick = changeNTP;
-
     fillTimedTest();
-
 });
 
 $('#datePicker').datepicker({
@@ -568,7 +144,6 @@ $('#datePicker').datepicker({
     autoclose: true
 })
 
-// Time picker
 $('.timepicker').timepicker({
     minuteStep: 1,
     showMeridian: false,
@@ -588,19 +163,13 @@ $('#modal-info').on('hidden.bs.modal', function (e) {
     document.getElementById('modalInfoText').innerHTML = "";
 });
 
-
 $("#modal-user").on("shown.bs.modal", function ()
 {
-
     console.debug("show modal-user");
-
 });
-
 
 $("#modal-networkSettings").on("shown.bs.modal", function ()
 {
-    let useDHCP = false
-
     if(useDHCP) {
         $('#addressTypeDynamic').prop('checked', true)
     } else {
@@ -616,26 +185,6 @@ $("#modal-datetime").on("shown.bs.modal", function ()
     $('#datePicker').datepicker('setDate', 'today');
     $('#timepicker').timepicker('defaultTime', 'current');
     timeZoneDetect();
-    let settingsNTP = ''
-
-    var xmlhttp = new XMLHttpRequest();
-
-    xmlhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var ups = JSON.parse(this.responseText);
-            settingsNTP = ups.settings[8];
-            if(settingsNTP) {
-                $('#timestampDynamic').prop('checked', true)
-            } else {
-                $('#timestampManual').prop('checked', true)
-            }
-
-            changeNTP();
-
-            document.getElementById("ntpServer").value = ups.settings[9];
-        };
-    };
-
 });
 </script>
 </body>
