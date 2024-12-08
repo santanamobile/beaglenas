@@ -37,6 +37,14 @@ def unmount_usb():
     except subprocess.CalledProcessError as e:
         return jsonify({"status": "error", "message": f"Eject error: {e}"}), 500
 
+def get_extra_network_info():
+    try:
+        result = subprocess.check_output("ip route | grep default", shell=True).decode()
+        return result.split()[2], result.split()[6]
+    except Exception:
+        return None
+
+# @app.route('/netinfo', methods=['GET','POST'])
 def get_network_info():
 
     if not session.get('logged_in'):
@@ -44,7 +52,8 @@ def get_network_info():
 
     network_info = []
     interfaces = netifaces.interfaces()
-    
+    gateway, iptype = get_extra_network_info()
+
     if NETWORK_INTERFACE in interfaces:
         ifaddrs = netifaces.ifaddresses(NETWORK_INTERFACE)
         if netifaces.AF_INET in ifaddrs:
@@ -53,7 +62,9 @@ def get_network_info():
                 'interface': 'eth0',
                 'ip_address': ipv4_info.get('addr', 'N/A'),
                 'netmask': ipv4_info.get('netmask', 'N/A'),
-                'broadcast': ipv4_info.get('broadcast', 'N/A')
+                'broadcast': ipv4_info.get('broadcast', 'N/A'),
+                'gateway': gateway,
+                'iptype': iptype
             })
 
     return network_info
@@ -150,6 +161,26 @@ def dashboard():
 def logout():
     session.pop('logged_in', None)
     return redirect(url_for('login'))
+
+@app.route('/shutdown', methods=['POST'])
+def shutdown():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    try:
+        subprocess.call(['sudo', 'shutdown', '-h', 'now'])
+        return jsonify({"message": "The device will be shutdown..."}), 200
+    except Exception as e:
+        return jsonify({"error": f"Failed to turn off device: {str(e)}"}), 500
+
+@app.route('/reboot', methods=['POST'])
+def reboot():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    try:
+        subprocess.call(['sudo', 'reboot'])
+        return jsonify({"message": "The device will be restarted..."}), 200
+    except Exception as e:
+        return jsonify({"error": f"Failed to restart device: {str(e)}"}), 500
 
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
