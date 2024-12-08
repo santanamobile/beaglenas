@@ -22,7 +22,8 @@
     <![endif]-->
 <!-- Async Functions -->
 <script>
-async function updateDashboard() {
+async function updateDashboard()
+{
     try {
         const response = await fetch('/status');
         const data = await response.json();
@@ -35,7 +36,6 @@ async function updateDashboard() {
 
         let urate = data.upload_rate;
         let drate = data.download_rate;
-        let iptype = data.iptype;
 
         if (urate < 1000)
             document.getElementById('network_upload_rate').textContent = urate + ' Kb/s';
@@ -49,18 +49,6 @@ async function updateDashboard() {
         else {
             drate = drate / 1000
             document.getElementById('network_download_rate').textContent = drate.toFixed(2) + ' Mb/s';
-        }
-
-        const eth0 = data.network_info.find(iface => iface.interface === 'eth0');
-
-        if (eth0) {
-            document.getElementById("staticIP").value = eth0.ip_address || '';
-            document.getElementById("staticSN").value = eth0.netmask || '';
-            document.getElementById("staticGW").value = eth0.gateway || '';
-        }
-
-        if (iptype == 'static') {
-            document.getElementById('addressTypeDynamic').checked = true;
         }
 
         let elem = document.getElementById("storage_percent");
@@ -79,7 +67,6 @@ async function updateDashboard() {
     } catch (error) {
         console.error("Endpoint error:", error);
     }
-
 }
 
 setInterval(updateDashboard, 5000);
@@ -133,6 +120,21 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                             <ul class="treeview-menu">
                                 <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-eject">
                                     <i class="fa fa-eject"></i>Eject</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-wrench"></i> <span>Settings</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-networkSettings">
+                                    <i class="fa fa-sitemap"></i>Network</a></li>
+                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-datetime">
+                                    <i class="fa fa-calendar"></i>Date/Time</a></li>
                             </ul>
                         </li>
 
@@ -312,6 +314,118 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                 </div>
             </div>
 
+            <div class="modal fade" id="modal-networkSettings">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title"><i class="fa fa-laptop"></i> Network Settings</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="addressType" id="addressTypeDynamic" value="1">
+                                    <label class="form-check-label" for="addressTypeDynamic">DHCP (<span id="dynamicIP">&nbsp;</span>)</b>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="addressType" id="addressTypeStatic" value="2">
+                                    <label class="form-check-label" for="addressTypeStatic">Static</b>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <b>IP Address</b>
+                                <div class="input-group">
+                                    <input type="text" id="staticIP" class="form-control" data-inputmask="'alias': 'ip'" data-mask>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <b>Network Mask</b>
+                                <div class="input-group">
+                                    <input type="text" id="staticSN" class="form-control" data-inputmask="'alias': 'ip'" data-mask>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <b>Network Gateway</b>
+                                <div class="input-group">
+                                    <input type="text" id="staticGW" class="form-control" data-inputmask="'alias': 'ip'" data-mask>
+                                </div>
+                            </div>
+                            <form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="saveNetworkIP()">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-datetime">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title"><i class="fa fa-clock-o"></i> Date/Time Settings</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form name="formDateTime" class="formDateTime">
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <b>Server:</b>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-cloud"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="ntpServer" disabled="" placeholder="pool.ntp.org">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <b>Date:</b>
+                                    <div class="input-group date">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input type="text" class="form-control" id="datePicker">
+                                    </div>
+                                </div>
+                                <div class="bootstrap-timepicker">
+                                    <div class="form-group">
+                                        <b>Time:</b>
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-clock-o"></i>
+                                            </div>
+                                            <input type="text" class="form-control timepicker" id="timePicker">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <b>Timezone:</b>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-map-o"></i>
+                                        </span>
+                                        <select id="timeZoneList" name="timeZoneList" class="form-control">
+                                        </select>
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-search" id="tzDetect" onclick="timeZoneDetect()"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary pull-right" onclick="saveDateTime()">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="modal fade" id="modal-reboot">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -454,11 +568,9 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
 $(document).ready(function()
 {
     $('[data-mask]').inputmask()
+    changeNetworkHostInput();
     document.getElementById("addressTypeDynamic").onclick = changeNetworkHostInput;
-    document.getElementById("addressTypeFixed").onclick = changeNetworkHostInput;
-    document.getElementById("timestampDynamic").onclick = changeNTP;
-    document.getElementById("timestampManual").onclick = changeNTP;
-    fillTimedTest();
+    document.getElementById("addressTypeStatic").onclick = changeNetworkHostInput;
 });
 
 $('#datePicker').datepicker({
@@ -495,14 +607,7 @@ $("#modal-user").on("shown.bs.modal", function ()
 
 $("#modal-networkSettings").on("shown.bs.modal", function ()
 {
-    if(useDHCP) {
-        $('#addressTypeDynamic').prop('checked', true)
-    } else {
-        $('#addressTypeFixed').prop('checked', true)
-    }
-
-    changeNetworkHostInput();
-
+    getNetinfo();
 });
 
 $("#modal-datetime").on("shown.bs.modal", function ()

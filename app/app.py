@@ -13,7 +13,7 @@ import os
 
 auto_generated_key = os.urandom(32)
 app = Flask(__name__, static_folder=STATIC_FOLDER, template_folder=TEMPLATE_FOLDER)
-app.secret_key = auto_generated_key.hex()
+app.secret_key = '18908109j3091280931283901283j01f38f9012j80fc1280cj3012809'
 app.debug = False
 csrf = CSRFProtect(app)
 
@@ -44,7 +44,7 @@ def get_extra_network_info():
     except Exception:
         return None
 
-# @app.route('/netinfo', methods=['GET','POST'])
+@app.route('/netinfo', methods=['GET','POST'])
 def get_network_info():
 
     if not session.get('logged_in'):
@@ -67,7 +67,9 @@ def get_network_info():
                 'iptype': iptype
             })
 
-    return network_info
+    return jsonify({
+        'network_info': network_info
+    })
 
 @app.route('/status', methods=['GET'])
 def get_info():
@@ -119,8 +121,6 @@ def get_info():
         storage_total = storage.total // (2**30)
         storage_used = storage.used // (2**30)
 
-    network_info = get_network_info()
-
     now = datetime.now()
     system_date = now.strftime("%Y-%m-%d")
     system_time = now.strftime("%H:%M:%S")
@@ -135,8 +135,7 @@ def get_info():
         'storage_available': storage_available,
         'storage_total': storage_total,
         'storage_used': storage_used,
-        'storage_percent': storage_percent,
-        'network_info': network_info
+        'storage_percent': storage_percent
     })
 
 @app.route('/', methods=['GET', 'POST'])

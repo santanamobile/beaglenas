@@ -154,24 +154,6 @@ function changeNetworkHostInput()
     }
 }
 
-function fillTimedTest()
-{
-    let select = document.getElementById("timedTestList");
-    let txt = ''
-    select.options.length = 0;
-
-    for(let index = 1; index < 100; index += 1) {
-        if(index < 10)
-            txt = "0" + index;
-        else
-            txt = index;
-        select.options[select.options.length] = new Option(txt, index);
-    }
-
-    document.getElementById("timedTestList").selectedIndex = 0;
-
-}
-
 async function unmountUSB()
 {
 
@@ -207,5 +189,33 @@ async function unmountUSB()
             $('#modal-waiting').modal('hide');
             document.getElementById('modalErrorText').innerHTML = "Communication error.";
             $('#modal-error').modal('show');
+    }
+}
+
+async function getNetinfo()
+{
+    try {
+        const response = await fetch('/netinfo');
+        const data = await response.json();
+        const eth0 = data.network_info.find(iface => iface.interface === 'eth0');
+        let iptype = eth0.iptype;
+
+        if (eth0) {
+            document.getElementById("staticIP").value = eth0.ip_address || '';
+            document.getElementById("staticSN").value = eth0.netmask || '';
+            document.getElementById("staticGW").value = eth0.gateway || '';
+        }
+
+        if (iptype == 'dhcp') {
+            $('#addressTypeDynamic').prop('checked', true);
+            document.getElementById("dynamicIP").innerHTML = eth0.ip_address || '';
+        } else {
+            $('#addressTypeStatic').prop('checked', true);
+        }
+
+        changeNetworkHostInput();
+
+    } catch (error) {
+        console.error("Endpoint error:", error);
     }
 }
