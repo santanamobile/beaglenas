@@ -112,6 +112,32 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
 
                         <li class="treeview">
                             <a href="#">
+                                <i class="fa fa-users"></i> <span>Users</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-users">
+                                    <i class="fa fa-user"></i>Admin</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-folder"></i> <span>USB Device</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-eject">
+                                    <i class="fa fa-eject"></i>Eject</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="treeview">
+                            <a href="#">
                                 <i class="fa fa-share-alt"></i> <span>Sharing</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
@@ -205,6 +231,67 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                 </section>
             </div>
             <!-- Modal -->
+            <div class="modal fade" id="modal-users">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title"><i class="fa fa-user"></i> Username and Password</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form name="formUser" class="formUser">
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <b>Username:</b>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-user"></i>
+                                        </div>
+                                        <input type="text" class="form-control" id="inputUsername" disabled="" placeholder="admin">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <b>Password:</b>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-lock"></i>
+                                        </span>
+                                        <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+                                        <span class="input-group-addon">
+                                            <input type="checkbox" onclick="showUserPass()">
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="submit" onclick="saveUserPass()">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-eject">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title"><i class="fa fa-eject"></i> Remove USB Device</h4>
+                        </div>
+                        <div class="modal-body">Remove USB Device
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default btn-danger" data-dismiss="modal" id="unmountButton" onclick="unmountUSB()">Eject</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="modal fade" id="modal-sharing">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -272,8 +359,78 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                     </div>
                 </div>
             </div>
-
             <!-- Modal -->
+            <!-- Modal / System Messages -->
+            <div class="modal fade" id="modal-success">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title"><i class="fa fa-hand-spock-o"></i> &nbsp; Success</h4>
+                        </div>
+                        <div class="modal-body" id="modalSuccessText">&nbsp;</div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn pull-left btn-success" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-error">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title"><i class="fa fa-warning"></i> &nbsp; Error</h4>
+                        </div>
+                        <div class="modal-body" id="modalErrorText">&nbsp;</div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn pull-left btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-waiting">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">
+                                <div class="overlay">
+                                  <i class="fa fa-refresh fa-spin"></i> &nbsp; Please Wait
+                                </div>
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="progress active">
+                                <div class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">&nbsp; </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-info">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title"><i class="fa fa-info"></i> &nbsp; Attention</h4>
+                        </div>
+                        <div class="modal-body" id="modalInfoText">&nbsp;</div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn pull-left btn-info" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal / System Messages -->
             <!-- /.content-wrapper -->
         <footer class="main-footer">
             <div class="pull-right hidden-xs"><b>Firmware Version</b> <span id="firmwareVersionFooter"> v0.0.1 &nbsp; </span></div>
