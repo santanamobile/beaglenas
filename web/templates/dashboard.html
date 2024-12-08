@@ -123,6 +123,21 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                             </ul>
                         </li>                        
 
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-power-off"></i> <span>Power</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-reboot">
+                                    <i class="fa fa-recycle"></i>Restart</a></li>
+                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-shutdown">
+                                    <i class="fa fa-power-off"></i>Shutdown</a></li>
+                            </ul>
+                        </li>
+
                         <li>
                             <a href="{{ url_for('logout') }}">
                                 <i class="fa fa-sign-out"></i> <span>Logout</span>
@@ -209,6 +224,55 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                     </div>
                 </div>
             </div>
+
+            <div class="modal fade" id="modal-reboot">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title"><i class="fa fa-recycle"></i> Restart</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-xs-6">Click button to restart the device.</div>
+                                    <div class="col-xs-6">&nbsp;</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default btn-danger" data-dismiss="modal" id="rebootBtn" onclick="cmdReboot()">Restart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-shutdown">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title"><i class="fa fa-power-off"></i> &nbsp; Shutdown</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-xs-6">Click button to shutdown the device.</div>
+                                    <div class="col-xs-6">&nbsp;</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default btn-danger" data-dismiss="modal" id="shutdownBtn" onclick="cmdShutdown()">Shutdown</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Modal -->
             <!-- /.content-wrapper -->
         <footer class="main-footer">
