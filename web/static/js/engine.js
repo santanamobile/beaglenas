@@ -29,54 +29,69 @@ function cmdDefaults()
     console.debug("cmdDefaults");
 }
 
-function cmdReboot()
+async function cmdReboot()
 {
+    console.debug("cmdReboot");
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     $('#modal-reboot').modal('hide');
-    document.getElementById('modalInfoText').innerHTML = "Not implemented";
-    $('#modal-info').modal('show');
 
-    fetch('/reboot', {
-        method: 'POST',
+    try {
+        const response = await fetch('/reboot', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': csrfToken
             },
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.message || data.error);
-    })
-    .catch(error => console.error('Reboot error:', error));
+        });
 
+        const data = await response.json();
+        if (response.ok) {
+            document.getElementById('modalSuccessText').innerHTML = data.message;
+            $('#modal-success').modal('show');
+        } else {
+            document.getElementById('modalErrorText').innerHTML = "Error: " + data.message;
+        }
+    } catch (error) {
+            $('#modal-waiting').modal('hide');
+            document.getElementById('modalErrorText').innerHTML = "Backend error.";
+            $('#modal-error').modal('show');
+    }
 }
 
-function cmdShutdown()
+async function cmdShutdown()
 {
     console.debug("cmdShutdown");
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     $('#modal-shutdown').modal('hide');
-    document.getElementById('modalInfoText').innerHTML = "Shutdown complete";
-    $('#modal-info').modal('show');
 
-    fetch('/shutdown', {
-        method: 'POST',
+    try {
+        const response = await fetch('/shutdown', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': csrfToken
             },
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.message || data.error);
-    })
-    .catch(error => console.error('Shutdown error:', error));
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            document.getElementById('modalSuccessText').innerHTML = data.message;
+            $('#modal-success').modal('show');
+        } else {
+            document.getElementById('modalErrorText').innerHTML = "Error: " + data.message;
+        }
+    } catch (error) {
+            $('#modal-waiting').modal('hide');
+            document.getElementById('modalErrorText').innerHTML = "Backend error.";
+            $('#modal-error').modal('show');
+    }
 }
 
 function saveNetworkIP()
 {
+    $('#modal-networkSettings').modal('hide');
     document.getElementById('modalInfoText').innerHTML = "Not implemented";
     $('#modal-info').modal('show');
     console.debug("saveNetworkIP");
@@ -84,9 +99,7 @@ function saveNetworkIP()
 
 function saveUserPass()
 {
-    let user = document.getElementById('inputUsername').value;
-    let pass = document.getElementById('inputPassword').value;
-
+    $('#modal-users').modal('hide');
     document.getElementById('modalInfoText').innerHTML = "Not implemented";
     $('#modal-info').modal('show');
 }
@@ -121,6 +134,9 @@ function timeZoneDetect()
 
 function saveDateTime()
 {
+    $('#modal-datetime').modal('hide');
+    document.getElementById('modalInfoText').innerHTML = "Not implemented";
+    $('#modal-info').modal('show');
     debug.console("saveDateTime")
 }
 
@@ -198,7 +214,7 @@ async function getNetinfo()
         const response = await fetch('/netinfo');
         const data = await response.json();
         const eth0 = data.network_info.find(iface => iface.interface === 'eth0');
-        let iptype = eth0.iptype;
+        let iptype = "dhcp";
 
         if (eth0) {
             document.getElementById("staticIP").value = eth0.ip_address || '';

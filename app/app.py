@@ -32,7 +32,7 @@ def unmount_usb():
         return jsonify({"status": "error", "message": "Device not present"}), 400
 
     try:
-        subprocess.check_call(['umount', usb_mount_point])
+        subprocess.run(['sudo', '/bin/umount', usb_mount_point], check=True)
         return jsonify({"status": "success", "message": "Device removed with success!"})
     except subprocess.CalledProcessError as e:
         return jsonify({"status": "error", "message": f"Eject error: {e}"}), 500
@@ -40,11 +40,11 @@ def unmount_usb():
 def get_extra_network_info():
     try:
         result = subprocess.check_output("ip route | grep default", shell=True).decode()
-        return result.split()[2], result.split()[6]
+        return result.split()[2]
     except Exception:
         return None
 
-@app.route('/netinfo', methods=['GET','POST'])
+@app.route('/netinfo', methods=['GET'])
 def get_network_info():
 
     if not session.get('logged_in'):
@@ -52,7 +52,7 @@ def get_network_info():
 
     network_info = []
     interfaces = netifaces.interfaces()
-    gateway, iptype = get_extra_network_info()
+    gateway = get_extra_network_info()
 
     if NETWORK_INTERFACE in interfaces:
         ifaddrs = netifaces.ifaddresses(NETWORK_INTERFACE)
@@ -63,8 +63,7 @@ def get_network_info():
                 'ip_address': ipv4_info.get('addr', 'N/A'),
                 'netmask': ipv4_info.get('netmask', 'N/A'),
                 'broadcast': ipv4_info.get('broadcast', 'N/A'),
-                'gateway': gateway,
-                'iptype': iptype
+                'gateway': gateway
             })
 
     return jsonify({
@@ -163,21 +162,25 @@ def logout():
 
 @app.route('/shutdown', methods=['POST'])
 def shutdown():
+
     if not session.get('logged_in'):
         return redirect(url_for('login'))
+
     try:
-        subprocess.call(['sudo', 'shutdown', '-h', 'now'])
-        return jsonify({"message": "The device will be shutdown..."}), 200
+        subprocess.run(['sudo', '/sbin/halt'], check=True)
+        return jsonify({"message": "Device shutdown..."}), 200
     except Exception as e:
         return jsonify({"error": f"Failed to turn off device: {str(e)}"}), 500
 
 @app.route('/reboot', methods=['POST'])
 def reboot():
+
     if not session.get('logged_in'):
         return redirect(url_for('login'))
+
     try:
-        subprocess.call(['sudo', 'reboot'])
-        return jsonify({"message": "The device will be restarted..."}), 200
+        subprocess.run(['sudo', '/sbin/reboot'], check=True)
+        return jsonify({"message": "Device restarted..."}), 200
     except Exception as e:
         return jsonify({"error": f"Failed to restart device: {str(e)}"}), 500
 
@@ -186,4 +189,4 @@ def favicon():
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=5000)

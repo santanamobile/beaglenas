@@ -125,6 +125,19 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
 
                         <li class="treeview">
                             <a href="#">
+                                <i class="fa fa-share-alt"></i> <span>Sharing</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-sharing">
+                                    <i class="fa fa-share-alt"></i>Services</a></li>
+                            </ul>
+                        </li>                        
+
+                        <li class="treeview">
+                            <a href="#">
                                 <i class="fa fa-wrench"></i> <span>Settings</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
@@ -137,19 +150,6 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                                     <i class="fa fa-calendar"></i>Date/Time</a></li>
                             </ul>
                         </li>
-
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-share-alt"></i> <span>Sharing</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span>
-                            </a>
-                            <ul class="treeview-menu">
-                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-sharing">
-                                    <i class="fa fa-share-alt"></i>Services</a></li>
-                            </ul>
-                        </li>                        
 
                         <li class="treeview">
                             <a href="#">
@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa fa-user"></i>Network Sharing</h4>
+                            <h4 class="modal-title"><i class="fa fa-share-alt"></i> Network Sharing</h4>
                         </div>
                         <div class="modal-body">
                             <div class="box-body"> SMB/CIFS
@@ -600,9 +600,9 @@ $('#modal-info').on('hidden.bs.modal', function (e) {
     document.getElementById('modalInfoText').innerHTML = "";
 });
 
-$("#modal-user").on("shown.bs.modal", function ()
+$("#modal-users").on("shown.bs.modal", function ()
 {
-    console.debug("show modal-user");
+    console.log("show modal-user");
 });
 
 $("#modal-networkSettings").on("shown.bs.modal", function ()
