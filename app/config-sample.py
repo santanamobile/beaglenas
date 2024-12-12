@@ -1,5 +1,4 @@
-USERNAME   = 'webusername'
-PASSWORD   = 'webpassword'
+ALLOWED_GROUP='sancloud'
 MOUNT_POINT= '/mount/point'
 NETWORK_INTERFACE = 'iface0'
 STATIC_FOLDER='/var/www/static'

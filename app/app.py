@@ -1,15 +1,18 @@
 #!/bin/env python3
 # Flask Web Server
 #
-from flask import Flask, render_template, redirect, request, url_for, session, jsonify, send_from_directory
+from flask import Flask, render_template, redirect, request, url_for, session, jsonify, send_from_directory, flash
 from flask_wtf.csrf import CSRFProtect
 from datetime import datetime
-from config import USERNAME, PASSWORD, MOUNT_POINT, NETWORK_INTERFACE, STATIC_FOLDER, TEMPLATE_FOLDER
+from config import ALLOWED_GROUP, MOUNT_POINT, NETWORK_INTERFACE, STATIC_FOLDER, TEMPLATE_FOLDER
 import subprocess
 import netifaces
 import psutil
 import time
 import os
+import crypt
+import pwd
+import grp
 
 auto_generated_key = os.urandom(32)
 app = Flask(__name__, static_folder=STATIC_FOLDER, template_folder=TEMPLATE_FOLDER)
@@ -137,16 +140,46 @@ def get_info():
         'storage_percent': storage_percent
     })
 
+def authenticate(username, password):
+    try:
+        user_info = pwd.getpwnam(username)
+        encrypted_password = user_info.pw_passwd
+        
+        if encrypted_password == "x":
+            import spwd
+            shadow_info = spwd.getspnam(username)
+            encrypted_password = shadow_info.sp_pwdp
+
+        if crypt.crypt(password, encrypted_password) != encrypted_password:
+            return False
+
+        group_info = grp.getgrnam(ALLOWED_GROUP)
+        if username not in group_info.gr_name:
+            return False
+
+        return True
+
+    except KeyError:
+        return False
+
+    except PermissionError:
+        flash("Insufficient permissions to authenticate.")
+        return False
+
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('loginUsername')
         password = request.form.get('loginPassword')
-        if username == USERNAME and password == PASSWORD:
+
+        if authenticate(username, password):
             session['logged_in'] = True
+            session['username'] = username
             return redirect(url_for('dashboard'))
         else:
+            flash("Wrong username or password.")
             return render_template('login.html', error="Invalid Credentials")
+
     return render_template('login.html')
 
 @app.route('/dashboard')
