@@ -25,12 +25,6 @@
   color: #f6f6f6;
   background: rgba(0, 0, 0, 0.1);
 }
-.skin-purple .main-header .navbar .sidebar-toggle {
-  color: #fff;
-}
-.skin-purple .main-header .navbar .sidebar-toggle:hover {
-  background-color: #555299;
-}
 @media (max-width: 767px) {
   .skin-purple .main-header .navbar .dropdown-menu li.divider {
     background-color: rgba(255, 255, 255, 0.1);

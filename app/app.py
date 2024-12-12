@@ -4,7 +4,7 @@
 from flask import Flask, render_template, redirect, request, url_for, session, jsonify, send_from_directory, flash
 from flask_wtf.csrf import CSRFProtect
 from datetime import datetime
-from config import ALLOWED_GROUP, MOUNT_POINT, NETWORK_INTERFACE, STATIC_FOLDER, TEMPLATE_FOLDER
+from config import SECRET_KEY, ALLOWED_GROUP, MOUNT_POINT, NETWORK_INTERFACE, STATIC_FOLDER, TEMPLATE_FOLDER
 import subprocess
 import netifaces
 import psutil
@@ -16,7 +16,7 @@ import grp
 
 auto_generated_key = os.urandom(32)
 app = Flask(__name__, static_folder=STATIC_FOLDER, template_folder=TEMPLATE_FOLDER)
-app.secret_key = '18908109j3091280931283901283j01f38f9012j80fc1280cj3012809'
+app.secret_key = SECRET_KEY
 app.debug = False
 csrf = CSRFProtect(app)
 
