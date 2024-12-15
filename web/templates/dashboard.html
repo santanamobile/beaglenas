@@ -28,6 +28,7 @@ async function updateDashboard()
         const response = await fetch('/status');
         const data = await response.json();
 
+        document.getElementById("loginUsername").innerHTML = 'Username: ' + data.username;
         document.getElementById("deviceDate").innerHTML = data.system_date;
         document.getElementById("deviceTime").innerHTML = data.system_time;
 
@@ -92,14 +93,14 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
 
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-users"></i> <span>Users</span>
+                                <i class="fa fa-user"></i> <span>User</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
                             </a>
                             <ul class="treeview-menu">
-                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-users">
-                                    <i class="fa fa-user"></i>Admin</a></li>
+                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-password">
+                                    <i class="fa fa-lock"></i>Password</a></li>
                             </ul>
                         </li>
 
@@ -226,40 +227,52 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                 </section>
             </div>
             <!-- Modal -->
-            <div class="modal fade" id="modal-users">
+            <div class="modal fade" id="modal-password">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa fa-user"></i> Username and Password</h4>
+                            <h4 class="modal-title"><i class="fa fa-user"></i> Change Password</h4>
                         </div>
                         <div class="modal-body">
-                            <form name="formUser" class="formUser">
+                            <form method="POST" action="{{ url_for('change_password') }}">
                             <div class="box-body">
                                 <div class="form-group">
-                                    <b>Username:</b>
+                                    <span id="loginUsername"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="loginPassword">Current Password:</label>
                                     <div class="input-group">
-                                        <div class="input-group-addon">
-                                            <i class="fa fa-user"></i>
-                                        </div>
-                                        <input type="text" class="form-control" id="inputUsername" disabled="" placeholder="admin">
+                                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                        <input type="password" id="loginPassword" name="loginPassword" required>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <b>Password:</b>
+                                    <label for="newPassword">New Password:</label>
                                     <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-lock"></i>
-                                        </span>
-                                        <input type="password" class="form-control" id="inputPassword" placeholder="Password">
-                                        <span class="input-group-addon">
-                                            <input type="checkbox" onclick="showUserPass()" onkeypress="if(event.keyCode==13) showUserPass()">
-                                        </span>
+                                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                        <input type="password" id="newPassword" name="newPassword" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">Confirm New Password:</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                        <input type="password" id="confirmPassword" name="confirmPassword" required>
                                     </div>
                                 </div>
                             </div>
                             </form>
+                            {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                <ul>
+                                {% for message in messages %}
+                                    <li>{{ message }}</li>
+                                {% endfor %}
+                                </ul>
+                            {% endif %}
+                            {% endwith %}
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
@@ -296,7 +309,19 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                             <h4 class="modal-title"><i class="fa fa-share-alt"></i> Network Sharing</h4>
                         </div>
                         <div class="modal-body">
-                            <div class="box-body"> SMB/CIFS
+                            <div class="box-body">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="services[]" value="SMB/CIFS" id="smbCifs">
+                                    <label class="form-check-label" for="smbCifs">SMB/CIFS</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="services[]" value="NFS" id="nfs">
+                                    <label class="form-check-label" for="nfs">NFS</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="services[]" value="DLNA" id="dlna">
+                                    <label class="form-check-label" for="dlna">DLNA</label>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -404,7 +429,9 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                                         <select id="timeZoneList" name="timeZoneList" class="form-control">
                                         </select>
                                         <span class="input-group-addon">
-                                            <a class="fa fa-search" id="tzDetect" href="#" role="button" onclick="timeZoneDetect()" onkeypress="if(event.keyCode==13)timeZoneDetect()"></a>
+                                            <button type="button" class="fa fa-search" id="tzDetect" onclick="timeZoneDetect()">
+                                                <span class="sr-only">Detectar timezone</span>
+                                            </button>
                                         </span>
                                     </div>
                                 </div>
@@ -512,10 +539,7 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                                 </div>
                             </h4>
                         </div>
-                        <div class="modal-body">
-                            <div class="progress active">
-                                <div class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
-                            </div>
+                        <div class="modal-body">&nbsp; 
                         </div>
                         <div class="modal-footer">&nbsp; </div>
                     </div>
@@ -591,11 +615,6 @@ $('#modal-success').on('hidden.bs.modal', function (e) {
 
 $('#modal-info').on('hidden.bs.modal', function (e) {
     document.getElementById('modalInfoText').innerHTML = "";
-});
-
-$("#modal-users").on("shown.bs.modal", function ()
-{
-    console.log("show modal-user");
 });
 
 $("#modal-networkSettings").on("shown.bs.modal", function ()

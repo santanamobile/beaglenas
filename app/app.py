@@ -17,6 +17,7 @@ import grp
 auto_generated_key = os.urandom(32)
 app = Flask(__name__, static_folder=STATIC_FOLDER, template_folder=TEMPLATE_FOLDER)
 app.secret_key = SECRET_KEY
+app.config['MAX_CONTENT_LENGTH'] = 64
 app.debug = False
 csrf = CSRFProtect(app)
 
@@ -79,6 +80,8 @@ def get_info():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
 
+    username = session['username']
+
     global previous_net, previous_time
 
     cpu_usage = psutil.cpu_percent(interval=1)
@@ -128,6 +131,7 @@ def get_info():
     system_time = now.strftime("%H:%M:%S")
 
     return jsonify({
+        'username': username,
         'system_date': system_date,
         'system_time': system_time,
         'cpu_usage': cpu_usage,
@@ -222,4 +226,4 @@ def favicon():
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='127.0.0.1', port=5000)

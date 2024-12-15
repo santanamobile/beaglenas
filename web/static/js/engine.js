@@ -1,32 +1,12 @@
-function showUserPass()
+function showUserPassword()
 {
-  let x = document.getElementById("inputPassword");
+    let element = document.getElementById("loginPassword");
 
-  if (x.type === "password") {
-    x.type = "text";
-  } else {
-    x.type = "password";
-  }
-
-}
-
-function showLoginPass()
-{
-  let x = document.getElementById("loginPassword");
-
-  if (x.type === "password") {
-    x.type = "text";
-  } else {
-    x.type = "password";
-  }
-
-}
-
-function cmdDefaults()
-{
-    document.getElementById('modalInfoText').innerHTML = "Not implemented";
-    $('#modal-info').modal('show');
-    console.debug("cmdDefaults");
+    if (element.type === "password") {
+        element.type = "text";
+    } else {
+        element.type = "password";
+    }
 }
 
 async function cmdReboot()
@@ -89,19 +69,23 @@ async function cmdShutdown()
     }
 }
 
+function notImplemented()
+{
+    document.getElementById('modalInfoText').innerHTML = "Not implemented";
+    $('#modal-info').modal('show');
+}
+
 function saveNetworkIP()
 {
     $('#modal-networkSettings').modal('hide');
-    document.getElementById('modalInfoText').innerHTML = "Not implemented";
-    $('#modal-info').modal('show');
-    console.debug("saveNetworkIP");
+    notImplemented();
 }
 
 function saveUserPass()
 {
     $('#modal-users').modal('hide');
-    document.getElementById('modalInfoText').innerHTML = "Not implemented";
-    $('#modal-info').modal('show');
+    // notImplemented();
+
 }
 
 function timeZoneDetect()
@@ -135,9 +119,7 @@ function timeZoneDetect()
 function saveDateTime()
 {
     $('#modal-datetime').modal('hide');
-    document.getElementById('modalInfoText').innerHTML = "Not implemented";
-    $('#modal-info').modal('show');
-    debug.console("saveDateTime")
+    notImplemented();
 }
 
 function changeNTP()
