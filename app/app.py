@@ -23,6 +23,65 @@ csrf = CSRFProtect(app)
 previous_net = psutil.net_io_counters()
 previous_time = time.time()
 
+@app.route('/manage_service', methods=['POST'])
+def manage_service():
+
+    if not session.get('logged_in'):
+        return jsonify(success=False, error="Unauthorized"), 401
+
+    data = request.json
+    service_name = data.get('service')
+    action = data.get('action')
+
+    service_scripts = {
+        "dlna": "/etc/init.d/S60minidlnad",
+        "smb": "/etc/init.d/S91smb",
+        "nfs": "/etc/init.d/S60nfs"
+    }
+
+    if service_name not in service_scripts:
+        return jsonify(success=False, error="Invalid service"), 400
+
+    script_path = service_scripts[service_name]
+
+    if action not in ["start", "stop", "restart"]:
+        return jsonify(success=False, error="Invalid action"), 400
+
+    try:
+        subprocess.run(['sudo', script_path, action], check=True)
+        return jsonify(success=True, message=f"{service_name} {action}ed successfully.")
+
+    except subprocess.CalledProcessError as e:
+        return jsonify(success=False, error=f"Failed to {action} {service_name}: {str(e)}"), 500
+
+@app.route('/service_status', methods=['POST'])
+def service_status():
+
+    if not session.get('logged_in'):
+        return jsonify(success=False, error="Unauthorized"), 401
+
+    data = request.json
+    service_name = data.get('service')
+
+    valid_services = ["dlna", "smb", "nfs"]
+
+    if service_name not in valid_services:
+        return jsonify(success=False, error="Invalid service"), 400
+
+    try:
+        result = subprocess.run(
+            ['/bin/check_service_status.sh', service_name],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True
+        )
+        status = result.stdout.strip()
+        return jsonify(success=True, status=status)
+
+    except subprocess.CalledProcessError as e:
+        return jsonify(success=False, error=f"Error checking status: {str(e)}"), 500
+
 @app.route('/change_password', methods=['POST'])
 def change_password():
 

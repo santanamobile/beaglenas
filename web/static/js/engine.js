@@ -1,3 +1,62 @@
+function manageService(service, action)
+{
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    fetch('/manage_service', {
+        method: 'POST', 
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({ service: service, action: action }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.status === 'success') {
+                document.getElementById('modalInfoText').innerHTML = `${service} ${action}ed successfully!`;
+                $('#modal-info').modal('show');
+            } else {
+                document.getElementById('modalInfoText').innerHTML = data.message;
+                $('#modal-info').modal('show');
+
+            }
+        })
+        .catch((error) => {
+            document.getElementById('modalInfoText').innerHTML = "Error" + error.message;
+            $('#modal-info').modal('show');
+    });
+}
+
+function updateServiceStatus()
+{
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    const services = ["dlna", "smb", "nfs"];
+
+    services.forEach(serviceName => {
+        fetch('/service_status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ service: serviceName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const statusLabel = document.getElementById(`${serviceName}-status`);
+                statusLabel.textContent = data.status === "running" ? "Running" : "Stopped";
+                statusLabel.className = data.status === "running" ? "label label-success" : "label label-danger";
+            } else {
+                document.getElementById('modalInfoText').innerHTML = `Error checking status for ${serviceName}: ${data.error}`;
+                $('#modal-info').modal('show');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+}
+
 function showUserPassword()
 {
     let element = document.getElementById("loginPassword");
@@ -107,8 +166,9 @@ function saveUserPass()
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert("Password changed successfully.");
             $('#modal-password').modal('hide');
+            document.getElementById('modalInfoText').innerHTML = "Password changed successfully.";
+            $('#modal-info').modal('show');
         } else {
             document.getElementById('message-box').innerText = data.error || "An error occurred.";
         }

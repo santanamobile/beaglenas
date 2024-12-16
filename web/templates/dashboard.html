@@ -119,13 +119,13 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
 
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-share-alt"></i> <span>Sharing</span>
+                                <i class="fa fa-tasks"></i> <span>System</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
                             </a>
                             <ul class="treeview-menu">
-                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-sharing">
+                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-services">
                                     <i class="fa fa-share-alt"></i>Services</a></li>
                             </ul>
                         </li>                        
@@ -290,33 +290,54 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                 </div>
             </div>
 
-            <div class="modal fade" id="modal-sharing">
+            <div class="modal fade" id="modal-services">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa fa-share-alt"></i> Network Sharing</h4>
+                            <h4 class="modal-title"><i class="fa fa-share-alt"></i> Network Services</h4>
                         </div>
                         <div class="modal-body">
-                            <div class="box-body">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="services[]" value="SMB/CIFS" id="smbCifs">
-                                    <label class="form-check-label" for="smbCifs">SMB/CIFS</label>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-xs-8 col-sm-6">SMB/CIFS (<span id="smb-status" class="label label-default">Checking...</span>)</div>
+                                    <div class="col-xs-8 col-sm-6">
+                                        <div class="btn-group">
+                                            <button class="btn btn-success" onclick="manageService('smb', 'start')">Start</button>
+                                            <button class="btn btn-warning" onclick="manageService('smb', 'restart')">Restart</button>
+                                            <button class="btn btn-danger" onclick="manageService('smb', 'stop')">Stop</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="services[]" value="NFS" id="nfs">
-                                    <label class="form-check-label" for="nfs">NFS</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-xs-8 col-sm-6">NFS (<span id="nfs-status" class="label label-default">Checking...</span>)</div>
+                                    <div class="col-xs-8 col-sm-6">
+                                        <div class="btn-group">
+                                            <button class="btn btn-success" onclick="manageService('nfs', 'start')">Start</button>
+                                            <button class="btn btn-warning" onclick="manageService('nfs', 'restart')">Restart</button>
+                                            <button class="btn btn-danger" onclick="manageService('nfs', 'stop')">Stop</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="services[]" value="DLNA" id="dlna">
-                                    <label class="form-check-label" for="dlna">DLNA</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-xs-8 col-sm-6">DLNA (<span id="dlna-status" class="label label-default">Checking...</span>)</div>
+                                    <div class="col-xs-8 col-sm-6">
+                                        <div class="btn-group">
+                                            <button class="btn btn-success" onclick="manageService('dlna', 'start')">Start</button>
+                                            <button class="btn btn-warning" onclick="manageService('dlna', 'restart')">Restart</button>
+                                            <button class="btn btn-danger" onclick="manageService('dlna', 'stop')">Stop</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary pull-right" id="submit">Save</button>
                         </div>
                     </div>
                 </div>
@@ -618,6 +639,12 @@ $("#modal-datetime").on("shown.bs.modal", function ()
     $('#timepicker').timepicker('defaultTime', 'current');
     timeZoneDetect();
 });
+
+$("#modal-services").on("shown.bs.modal", function ()
+{
+    updateServiceStatus();
+});
+
 </script>
 </body>
 </html>
