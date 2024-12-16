@@ -11,7 +11,6 @@ function showUserPassword()
 
 async function cmdReboot()
 {
-    console.debug("cmdReboot");
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     $('#modal-reboot').modal('hide');
@@ -84,8 +83,39 @@ function saveNetworkIP()
 function saveUserPass()
 {
     $('#modal-users').modal('hide');
-    // notImplemented();
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const currentPassword = document.getElementById('loginPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
 
+    if (newPassword !== confirmPassword) {
+        document.getElementById('message-box').innerText = "Passwords do not match.";
+        return;
+    }
+
+    fetch('/change_password', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+            currentPassword: currentPassword,
+            newPassword: newPassword
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Password changed successfully.");
+            $('#modal-password').modal('hide');
+        } else {
+            document.getElementById('message-box').innerText = data.error || "An error occurred.";
+        }
+    })
+    .catch(error => {
+        document.getElementById('message-box').innerText = "Failed to process the request.";
+    });
 }
 
 function timeZoneDetect()
