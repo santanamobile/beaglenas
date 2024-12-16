@@ -236,10 +236,9 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                             <h4 class="modal-title"><i class="fa fa-user"></i> Change Password</h4>
                         </div>
                         <div class="modal-body">
-                            <form method="POST" action="{{ url_for('change_password') }}">
                             <div class="box-body">
                                 <div class="form-group">
-                                    <span id="loginUsername"></span>
+                                    <span id="loginUsername">{{ username }}</span>
                                 </div>
                                 <div class="form-group">
                                     <label for="loginPassword">Current Password:</label>
@@ -263,16 +262,7 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                                     </div>
                                 </div>
                             </div>
-                            </form>
-                            {% with messages = get_flashed_messages() %}
-                            {% if messages %}
-                                <ul>
-                                {% for message in messages %}
-                                    <li>{{ message }}</li>
-                                {% endfor %}
-                                </ul>
-                            {% endif %}
-                            {% endwith %}
+                            <div id="message-box" class="text-danger"></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>

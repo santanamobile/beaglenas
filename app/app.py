@@ -17,12 +17,35 @@ import grp
 auto_generated_key = os.urandom(32)
 app = Flask(__name__, static_folder=STATIC_FOLDER, template_folder=TEMPLATE_FOLDER)
 app.secret_key = SECRET_KEY
-app.config['MAX_CONTENT_LENGTH'] = 64
 app.debug = False
 csrf = CSRFProtect(app)
 
 previous_net = psutil.net_io_counters()
 previous_time = time.time()
+
+@app.route('/change_password', methods=['POST'])
+def change_password():
+
+    if not session.get('logged_in'):
+        return jsonify(success=False, error="Unauthorized"), 401
+
+    data = request.json
+    username = session.get('username')
+    current_password = data.get('currentPassword')
+    new_password = data.get('newPassword')
+
+    if not username or not current_password or not new_password:
+        return jsonify(success=False, error="Missing data"), 400
+
+    if not authenticate(username, current_password):
+        return jsonify(success=False, error="Current password is incorrect"), 403
+
+    try:
+        input_data = f"{username}:{new_password}\n"
+        subprocess.run(['sudo', 'chpasswd'], input=input_data, text=True, check=True)
+        return jsonify(success=True)
+    except subprocess.CalledProcessError as e:
+        return jsonify(success=False, error="Failed to change password"), 500
 
 @app.route('/unmount_usb0', methods=['POST'])
 def unmount_usb():
