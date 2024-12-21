@@ -125,8 +125,10 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                                 </span>
                             </a>
                             <ul class="treeview-menu">
+                                <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-shares">
+                                    <i class="fa fa-share-alt"></i>Shares</a></li>
                                 <li><a href="#" id="modal" data-toggle="modal" data-target="#modal-services">
-                                    <i class="fa fa-share-alt"></i>Services</a></li>
+                                    <i class="fa fa-cogs"></i>Services</a></li>
                             </ul>
                         </li>                        
 
@@ -285,6 +287,32 @@ document.addEventListener('DOMContentLoaded', updateDashboard);
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
                             <button type="button" class="btn btn-default btn-danger" data-dismiss="modal" id="unmountButton" onclick="unmountUSB()">Eject</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-shares">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title"><i class="fa fa-share-alt"></i> Shared Endpoints</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-xs-8 col-sm-6"><b>SMB/CIFS:</b> <span id="smb-share-name"></span></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-8 col-sm-6"><b>NFS:</b> <span id="nfs-share-name"></span></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-8 col-sm-6"><b>DLNA:</b> <span id="dlna-share-name"></span></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
@@ -627,6 +655,12 @@ $('#modal-success').on('hidden.bs.modal', function (e) {
 $('#modal-info').on('hidden.bs.modal', function (e) {
     document.getElementById('modalInfoText').innerHTML = "";
 });
+
+$("#modal-shares").on("shown.bs.modal", function ()
+{
+    getNetinfo();
+});
+
 
 $("#modal-networkSettings").on("shown.bs.modal", function ()
 {

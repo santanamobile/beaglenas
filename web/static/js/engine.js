@@ -292,6 +292,10 @@ async function getNetinfo()
             document.getElementById("staticIP").value = eth0.ip_address || '';
             document.getElementById("staticSN").value = eth0.netmask || '';
             document.getElementById("staticGW").value = eth0.gateway || '';
+
+            document.getElementById("smb-share-name").innerHTML = '\\\\' + eth0.ip_address + '\\storage';
+            document.getElementById("nfs-share-name").innerHTML = eth0.ip_address + ':/media/usb0';
+            document.getElementById("dlna-share-name").innerHTML = 'BeagleNAS';
         }
 
         if (iptype == 'dhcp') {
